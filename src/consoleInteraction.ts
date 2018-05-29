@@ -1,12 +1,12 @@
 import {Observable} from "rxjs/Observable";
-import * as ops from 'rxjs/operators'
+import {map, tap, filter} from 'rxjs/operators'
 import {Subject} from "rxjs/Subject";
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 
 import * as readline from 'readline';
 import {
-    createInitialScore,
+    createInitialScore, isGameFinished,
     nextScoreWithFormatting,
     ScoreAndBallWinner,
 } from "./TennisLogic";
@@ -22,8 +22,10 @@ function setupInteractionLoop() {
     const ifc = readline.createInterface(process.stdin, process.stdout)
     const inputReceiver: Subject<ScoreAndBallWinner> = new Subject();
     inputReceiver
-        .map(nextScoreWithFormatting) // non mutable
-        .do(displayAndAskForWinner)
+        .pipe(
+            filter(({score}) => !isGameFinished(score)),
+            map(nextScoreWithFormatting),
+            tap(displayAndAskForWinner))
         .subscribe();
     return displayAndAskForWinner;
 }

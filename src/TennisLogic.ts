@@ -23,6 +23,10 @@ function getPointScore(points: number) {
     return {0: "Love", 1: "Fifteen", 2: "Thirty", 3: "Forty"}[points];
 }
 
+export function isGameFinished([p1Points, p2Points]: Score): boolean {
+    return (p1Points >= 4 || p2Points >= 4) && Math.abs(p1Points - p2Points) > 1
+}
+
 export function formatScore([p1Points, p2Points]: Score) {
 
 

@@ -1,23 +1,48 @@
 import {equal} from "assert";
-import {formatScore, nextScoreWithFormatting, Score} from "../src/TennisLogic";
+import {formatScore, isGameFinished, nextScoreWithFormatting, Score} from "../src/TennisLogic";
 import {assert, expect} from 'chai';
 
 function nextScore(previousScore: Score, ballWinner: string) {
-    const {score} = nextScoreWithFormatting({score: previousScore, ballWinner})
+    const {score} = nextScoreWithFormatting({score: previousScore, ballWinner});
     return score;
 }
+
 
 describe('TennisLogic', () => {
 
     describe('nextScore', () => {
         it('adds 1 to player who wins', () => {
-            expect(nextScore([0, 0], "player1")).eql([1, 0])
-            expect(nextScore([0, 0], "player2")).eql([0, 1])
+            expect(nextScore([0, 0], "player1")).eql([1, 0]);
+            expect(nextScore([0, 0], "player2")).eql([0, 1]);
             expect(nextScore([5, 6], "player2")).eql([5, 7])
         });
     });
 
+    describe('isGameFinished', () => {
+        it('is over when one player has atleast 4 points and two more than the oponent', () => {
+            expect(isGameFinished([0, 0])).false;
+            expect(isGameFinished([1, 0])).false;
+            expect(isGameFinished([2, 0])).false;
+            expect(isGameFinished([3, 0])).false;
+            expect(isGameFinished([4, 0])).true;
+            
+            expect(isGameFinished([0, 0])).false;
+            expect(isGameFinished([0, 1])).false;
+            expect(isGameFinished([0, 2])).false;
+            expect(isGameFinished([0, 3])).false;
+            expect(isGameFinished([0, 4])).true;
 
+            expect(isGameFinished([3, 4])).false;
+            expect(isGameFinished([4, 3])).false;
+            expect(isGameFinished([10, 11])).false;
+
+            expect(isGameFinished([3, 5])).true;
+            expect(isGameFinished([5, 3])).true;
+            expect(isGameFinished([11, 9])).true
+
+        });
+        
+    });
 
     describe('formatScore', () => {
         const equalScores = [
@@ -33,7 +58,7 @@ describe('TennisLogic', () => {
                 let score: Score = [p1, p2] as Score;
                 expect(formatScore(score)).equal(result)
             });
-        })
+        });
 
         const pointScores = [
             [1, 0, "Fifteen-Love"],
