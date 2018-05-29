@@ -35,13 +35,13 @@ export function formatScore([p1Points, p2Points]: Score) {
     } else if (p1Points <= 3 && p2Points <= 3) {
         return getPointScore(p1Points) + "-" + getPointScore(p2Points)
     } else {
-        const getLeader = p1 => p2 => p1 >= p2 ? "player1" : "player2"
-        const typeOfResult = p1 => p2 => Math.abs(p1 - p2) > 1 ? "Win for " : "Advantage "
+        const getLeader = p1 => p2 => p1 >= p2 ? "player1" : "player2";
+        const typeOfResult = p1 => p2 => Math.abs(p1 - p2) > 1 ? "Win for " : "Advantage ";
         return typeOfResult(p1Points)(p2Points) + getLeader(p1Points)(p2Points)
     }
 }
 
-function nextScore(score: Score): (ballWinner: any) => Score {
+function nextScore([p1Points, p2Points]: Score): (ballWinner: any) => Score {
     // Fake todo implement
-    return ballWinner => [score[0] + 1, score[1]]
+    return ballWinner => ballWinner === "player1"? [p1Points + 1, p2Points] : [p1Points, p2Points + 1]
 }

@@ -1,18 +1,40 @@
 import {equal} from "assert";
 import {formatScore, nextScoreWithFormatting, Score} from "../src/TennisLogic";
-import { assert, expect } from 'chai';
+import {assert, expect} from 'chai';
+
+function nextScore(previousScore: Score, ballWinner: string) {
+    const {score} = nextScoreWithFormatting({score: previousScore, ballWinner})
+    return score;
+}
 
 describe('TennisLogic', () => {
 
-    describe('nextScoreWithFormatting', () => {
+    describe('nextScore', () => {
+        it('adds 1 to player who wins', () => {
+            expect(nextScore([0, 0], "player1")).eql([1, 0])
+            expect(nextScore([0, 0], "player2")).eql([0, 1])
+            expect(nextScore([5, 6], "player2")).eql([5, 7])
+        });
+    });
+
+
+
+    describe('formatScore', () => {
         const equalScores = [
             [0, 0, "Love-All"],
             [1, 1, "Fifteen-All"],
             [2, 2, "Thirty-All"],
             [3, 3, "Deuce"],
             [4, 4, "Deuce"],
+        ];
 
-        ]
+        equalScores.forEach(([p1, p2, result]) => {
+            it('equal scores', () => {
+                let score: Score = [p1, p2] as Score;
+                expect(formatScore(score)).equal(result)
+            });
+        })
+
         const pointScores = [
             [1, 0, "Fifteen-Love"],
             [0, 1, "Love-Fifteen"],
@@ -28,7 +50,14 @@ describe('TennisLogic', () => {
 
             [3, 2, "Forty-Thirty"],
             [2, 3, "Thirty-Forty"],
-        ]
+        ];
+        pointScores.forEach(([p1, p2, result]) => {
+            it('point scores', () => {
+                let score: Score = [p1, p2] as Score;
+                expect(formatScore(score)).equal(result)
+            });
+        });
+
         const endOfGame = [
             [4, 0, "Win for player1"],
             [0, 4, "Win for player2"],
@@ -50,26 +79,9 @@ describe('TennisLogic', () => {
             [4, 6, "Win for player2"],
             [16, 14, "Win for player1"],
             [14, 16, "Win for player2"]
-        ]
+        ];
 
-        equalScores.forEach(([p1, p2, result]) =>{
-            it('equal scores', () => {
-                let score: Score = [p1, p2] as Score;
-                expect(formatScore(score)).equal(result)
-            });
-            
-            it('point scores', () => {
-                
-            });
-        })
-
-        pointScores.forEach(([p1, p2, result]) =>{
-            it('point scores', () => {
-                let score: Score = [p1, p2] as Score;
-                expect(formatScore(score)).equal(result)
-            });
-        });
-        endOfGame.forEach(([p1, p2, result]) =>{
+        endOfGame.forEach(([p1, p2, result]) => {
             it('end of game', () => {
                 let score: Score = [p1, p2] as Score;
                 expect(formatScore(score)).equal(result)
