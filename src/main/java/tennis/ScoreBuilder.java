@@ -1,7 +1,7 @@
 package tennis;
 
 public interface ScoreBuilder {
-    boolean isAcceptable(int pointsPlayer1, int pointsPlayer2);
+    boolean isAcceptable(Points points);
 
-    String getScore(int pointsPlayer1, int pointsPlayer2);
+    String getScore(Points points);
 }

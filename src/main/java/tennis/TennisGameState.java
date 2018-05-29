@@ -1,21 +1,20 @@
 package tennis;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import static java.util.Arrays.asList;
 
 public class TennisGameState {
 
-    private final int pointsPlayer1;
-    private final int pointsPlayer2;
+    private final Points points;
 
     TennisGameState() {
-        this(0,0);
+        this(new Points(0,0));
     }
 
-    private TennisGameState(int pointsPlayer1, int pointsPlayer2) {
-        this.pointsPlayer1 = pointsPlayer1;
-        this.pointsPlayer2 = pointsPlayer2;
+    private TennisGameState(Points points) {
+        this.points = points;
     }
 
     public boolean notFinished() {
@@ -23,45 +22,42 @@ public class TennisGameState {
     }
 
     private boolean isFinished() {
-        return (pointsPlayer1 >= 4 || pointsPlayer2 >= 4) && Math.abs(pointsPlayer1-pointsPlayer2) > 1;
+        return (points.pointsPlayer1 >= 4 || points.pointsPlayer2 >= 4) && Math.abs(points.pointsPlayer1-points.pointsPlayer2) > 1;
     }
 
     public String winner() {
-        return pointsPlayer1 > pointsPlayer2 ? "Player 1" : "Player 2";
+        return points.pointsPlayer1 > points.pointsPlayer2 ? "Player 1" : "Player 2";
     }
 
-    /*
-
-    Code initial de la méthode "currentScore" avec des "if"
-
-    public String currentScore() {
-        if (pointsPlayer1 >= 3 && pointsPlayer2 >=  3) {
-            if (pointsPlayer1 == pointsPlayer2) {
-                return "DEUCE";
-            }
-            if (pointsPlayer2 > pointsPlayer1) {
-                return "Advantage player 2";
-            }
-        }
-        return getScorePlayer(pointsPlayer1) + " - " + getScorePlayer(pointsPlayer2);
-    }
-    */
-
-    private List<ScoreBuilder> builders = asList(new ScoreBuilderDeuce(), new ScoreBuilderAdvantage(), new ScoreBuilderNormal());
+    private List<ScoreBuilder> builders = asList(
+            new ScoreBuilderDeuce(),
+            new ScoreBuilderAdvantage(),
+            new ScoreBuilderNormal());
 
     public String currentScore() {
+
+        Predicate<? super ScoreBuilder> isAcceptable = new Predicate<ScoreBuilder>() {
+            @Override
+            public boolean test(ScoreBuilder scoreBuilder) {
+                return scoreBuilder.isAcceptable(points);
+            }
+        };
+
         return builders
                 .stream()
-                .filter(b -> b.isAcceptable(pointsPlayer1, pointsPlayer2))
+                .filter(isAcceptable)
                 .findFirst()
                 .get()
-                .getScore(pointsPlayer1, pointsPlayer2);
+                .getScore(points);
     }
 
 
 
     public TennisGameState computeNextScore(String pointWinner) {
-        return new TennisGameState(this.pointsPlayer1+(pointWinner.equals("1") ? 1 : 0), this.pointsPlayer2+(pointWinner.equals("2") ? 1 : 0));
+        return new TennisGameState(new Points(
+                this.points.pointsPlayer1+(pointWinner.equals("1") ? 1 : 0),
+                this.points.pointsPlayer2+(pointWinner.equals("2") ? 1 : 0))
+        );
     }
 
 
