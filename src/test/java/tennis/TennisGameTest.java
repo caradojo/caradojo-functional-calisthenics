@@ -16,7 +16,7 @@ public class TennisGameTest {
         assertThat(state.currentScore()).isEqualTo("LOVE - LOVE");
     }
 
-    // Some other scores
+    // Some intermediates scores
 
     @Test
     public void score_should_be_fifteen_love_when_first_player_won_first_point() {
@@ -141,4 +141,25 @@ public class TennisGameTest {
         assertThat(nextState.notFinished()).isFalse();
         assertThat(nextState.winner()).isEqualTo("Player 1");
     }
+
+    // Cas interdits
+
+    /*
+        Xavier : Ce test passe mais peut-être devrait-il être modifié pour vérifier
+        que la ligne (*) ne passe pas ? ....
+     */
+    @Test
+    public void interdit() {
+        TennisGameState nextState = state
+                .computeNextScore("1")
+                .computeNextScore("1")
+                .computeNextScore("1")
+                .computeNextScore("1") // Le joueur 1 a gangé : fin du jeu
+                .computeNextScore("2") // (*) Devrait être interdit
+                .computeNextScore("2")
+                .computeNextScore("2");
+        assertThat(nextState.notFinished()).isTrue();
+        assertThat(nextState.currentScore()).isEqualTo("Advantage player 1");
+    }
+
 }
