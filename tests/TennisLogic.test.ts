@@ -1,5 +1,5 @@
 import {equal} from "assert";
-import {formatScore, isGameFinished, nextScoreWithFormatting, Score} from "../src/TennisLogic";
+import {formatScore, isGameFinished, nextScoreWithFormatting, Score, p1, p2} from "../src/TennisLogic";
 import {assert, expect} from 'chai';
 
 function nextScore(previousScore: Score, ballWinner: string) {
@@ -12,9 +12,9 @@ describe('TennisLogic', () => {
 
     describe('nextScore', () => {
         it('adds 1 to player who wins', () => {
-            expect(nextScore([0, 0], "player1")).eql([1, 0]);
-            expect(nextScore([0, 0], "player2")).eql([0, 1]);
-            expect(nextScore([5, 6], "player2")).eql([5, 7])
+            expect(nextScore([0, 0], p1)).eql([1, 0]);
+            expect(nextScore([0, 0], p2)).eql([0, 1]);
+            expect(nextScore([5, 6], p2)).eql([5, 7])
         });
     });
 

@@ -9,24 +9,36 @@ import {
     createInitialScore, isGameFinished,
     nextScoreWithFormatting,
     ScoreAndBallWinner,
+    Score,
 } from "./TennisLogic";
 
 function setupInteractionLoop() {
-    function displayAndAskForWinner({score, formattedScore}) {
-        ifc.write('score: ' + formattedScore + "\n");
-        ifc.question('winner of next ball?', ballWinner => {
+    function askForNextBallWinner(score: Score) {
+        ifc.question('Winner of next ball? "p1" or "p2"? ', ballWinner => {
+            if (ballWinner !== 'p2' && ballWinner !== 'p1') {
+                ifc.write('invalid player\n')
+            }
             inputReceiver.next({score, ballWinner});
         });
+    }
+
+    function displayAndAskForWinner({score, formattedScore}) {
+        ifc.write('Score: ' + formattedScore + "\n\n");
+        if (isGameFinished(score)) {
+            inputReceiver.complete();
+        } else {
+            askForNextBallWinner(score);
+        }
     }
 
     const ifc = readline.createInterface(process.stdin, process.stdout)
     const inputReceiver: Subject<ScoreAndBallWinner> = new Subject();
     inputReceiver
         .pipe(
-            filter(({score}) => !isGameFinished(score)),
             map(nextScoreWithFormatting),
-            tap(displayAndAskForWinner))
-        .subscribe();
+            tap(displayAndAskForWinner),
+        )
+        .subscribe({complete: () => process.exit()});
     return displayAndAskForWinner;
 }
 

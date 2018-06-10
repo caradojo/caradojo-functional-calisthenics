@@ -2,6 +2,8 @@ export type ScoreAndBallWinner = { score: Score, ballWinner: string };
 export type Score = [number, number]
 type ScoreWithFormatting = { score: Score, formattedScore: string }
 
+export const p1 = "p1";
+export const p2 = "p2";
 export function nextScoreWithFormatting({score, ballWinner}: ScoreAndBallWinner): ScoreWithFormatting {
     let nextScoreValue = nextScore(score)(ballWinner); // violates no naming of values only functions
     return toScoreWithFormatting(nextScoreValue);
@@ -46,6 +48,13 @@ export function formatScore([p1Points, p2Points]: Score) {
 }
 
 function nextScore([p1Points, p2Points]: Score): (ballWinner: any) => Score {
-    // Fake todo implement
-    return ballWinner => ballWinner === "player1"? [p1Points + 1, p2Points] : [p1Points, p2Points + 1]
+    return ballWinner => {
+        if (ballWinner === p1) {
+            return [p1Points + 1, p2Points];
+        } else if (ballWinner === p2) {
+            return [p1Points, p2Points + 1];
+        } else {
+            return [p1Points, p2Points];
+        }
+    }
 }
